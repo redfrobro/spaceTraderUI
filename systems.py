@@ -2,29 +2,35 @@ import requests
 
 import items
 import factions
-BASE_URL = "https://api.spacetraders.io/v2"
-BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
-SYSTEMS_URL = "/systems"
+from settings import settings
+
+if settings['ENVIRONMENT'] == "DEV":
+    BASE_URL = settings['DEV_BASE_URL']
+else:
+    BASE_URL = settings['BASE_URL']
 
 
 class Galaxy:
+    """A representation of the galaxy"""
     def __init__(self, token=None):
         self.systems = self.get_systems(token)
         self.factions = self.get_factions(token)
         self.items = self.get_items(token)
 
-    def get_systems(self, token=None):
+    @staticmethod
+    def get_systems(token=None):
+        """Get a list of systems"""
         if token is not None:
-            response = requests.get(BASE_URL + SYSTEMS_URL, headers={'Authorization': f"Bearer {token}"})
+            response = requests.get(BASE_URL + settings['SYSTEM_URL'], headers={'Authorization': f"Bearer {token}"})
         else:
             raise ValueError("You must provide a token")
         print(response.text)
         return [System(system) for system in response.json()['data']]
 
     def get_factions(self, token=None):
-        return factions.get_factions(token)
+        return factions.get_factions(token)  # TODO - this is a placeholder
 
-    def get_items(self, token=None):
+    def get_items(self, token=None): # TODO - this is a placeholder
         return items.get_items(token)
 
 
@@ -35,3 +41,11 @@ class System:
 
     def get_waypoints(self):
         pass
+
+
+class Waypoint:
+    def __init__(self):
+        pass
+
+
+galaxy = Galaxy()

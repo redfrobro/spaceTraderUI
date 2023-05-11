@@ -1,8 +1,12 @@
 import requests
-BASE_URL = "https://api.spacetraders.io/v2"
-BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
-REGISTER_URL = "/register"
-AGENT_URL = "/my/agent"
+
+from settings import settings
+
+if settings['ENVIRONMENT'] == "DEV":
+    BASE_URL = settings['DEV_BASE_URL']
+else:
+    BASE_URL = settings['BASE_URL']
+
 
 
 class Agent:
@@ -12,7 +16,7 @@ class Agent:
         if _token is not None:
             headers['Authorization'] = f"Bearer {_token}"
             print(headers)
-            response = requests.get(BASE_URL + AGENT_URL,  headers=headers)
+            response = requests.get(BASE_URL + settings['AGENT_URL'],  headers=headers)
             print(response.text)
             self.name = response.json()['data']['symbol']
             self.account_id = response.json()['data']['accountId']
@@ -22,7 +26,7 @@ class Agent:
         elif name is not None and faction is not None:
             data = {'symbol': name,
                     'faction': faction}
-            response = requests.post(BASE_URL + REGISTER_URL, json=data, headers=headers)
+            response = requests.post(BASE_URL + settings['REGISTER_URL'], json=data, headers=headers)
             print(response.text)
             self.name = response.json()['data']['agent']['symbol']
             self.account_id = response.json()['data']['agent']['accountId']

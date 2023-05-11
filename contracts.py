@@ -2,15 +2,19 @@ import requests
 
 import items
 import factions
+from settings import settings
 
-BASE_URL = "https://api.spacetraders.io/v2"
-BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
+if settings['ENVIRONMENT'] == "DEV":
+    BASE_URL = settings['DEV_BASE_URL']
+else:
+    BASE_URL = settings['BASE_URL']
+
 CONTRACTS_URL = "/my/contracts"
 
 
 class Contract:
-    def __init__(self, contract_id=None, faction_symbol=None, deadline=None, on_accepted=None, on_fulfilled=None,
-                 cargo_to_deliver=None, accepted=None, fulfilled=None, expiration=None):
+    def __init__(self, contract_id, faction_symbol, deadline, on_accepted, on_fulfilled,
+                 cargo_to_deliver, accepted, fulfilled, expiration):
         self.id = contract_id
         self.faction_symbol = faction_symbol
         self.deadline = deadline

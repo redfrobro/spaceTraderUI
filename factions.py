@@ -1,9 +1,12 @@
 import requests
 
 import items
-BASE_URL = "https://api.spacetraders.io/v2"
-BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
-FACTIONS_URL = "/factions"
+from settings import settings
+if settings['ENVIRONMENT'] == "DEV":
+    BASE_URL = settings['DEV_BASE_URL']
+else:
+    BASE_URL = settings['BASE_URL']
+
 
 
 class Faction:
@@ -23,7 +26,7 @@ class Faction:
     def from_symbol(cls, symbol, token=None):
         """Create a Faction object from a faction symbol"""
         if token is not None:
-            response = requests.get(BASE_URL + FACTIONS_URL + f"/{symbol}", headers={'Authorization': f"Bearer {token}"})
+            response = requests.get(BASE_URL + settings['FACTION_URL'] + f"/{symbol}", headers={'Authorization': f"Bearer {token}"})
         else:
             raise ValueError("You must provide a token")
         print(response.text)
@@ -59,7 +62,7 @@ class Trait:
 
 def get_factions(token=None):
     if token is not None:
-        response = requests.get(BASE_URL + FACTIONS_URL, headers={'Authorization': f"Bearer {token}"})
+        response = requests.get(BASE_URL + settings['FACTIONS_URL'], headers={'Authorization': f"Bearer {token}"})
     else:
         raise ValueError("You must provide a token")
     print(response.text)

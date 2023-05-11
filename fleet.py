@@ -1,9 +1,12 @@
 import requests
 
 import items
-BASE_URL = "https://api.spacetraders.io/v2"
-BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
-SHIPS_URL = "/my/ships"
+from settings import settings
+
+if settings['ENVIRONMENT'] == "DEV":
+    BASE_URL = settings['DEV_BASE_URL']
+else:
+    BASE_URL = settings['BASE_URL']
 
 
 class Fleet:
@@ -17,7 +20,7 @@ class Fleet:
             raise ValueError("You must provide a token")
         headers = {'Content-Type': 'application/json',
                    'Authorization': f"Bearer {self.token}"}
-        response = requests.get(BASE_URL + SHIPS_URL, headers=headers)
+        response = requests.get(BASE_URL + settings['SHIPS_URL'], headers=headers)
         print(response.text)
         self.ships = [Ship(ship) for ship in response.json()['data']]
         # print(self.ships)

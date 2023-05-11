@@ -1,7 +1,7 @@
 import requests
 
 import items
-import factions
+import faction
 from settings import settings
 
 if settings['ENVIRONMENT'] == "DEV":

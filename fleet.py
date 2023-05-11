@@ -10,20 +10,26 @@ else:
 
 
 class Fleet:
-    def __init__(self, token: str = None):
+    def __init__(self, token: str, ships: list = None):
         self.token = token
         self.ships = []
-        self.update_ships()
+        if ships is not None:
+            self.ships = [Ship.from_ship_data(ship) for ship in ships]
+        else:
+            self.update_ships()
 
     def update_ships(self):
-        if self.token is None:
-            raise ValueError("You must provide a token")
+        """Get a list of ships"""
         headers = {'Content-Type': 'application/json',
                    'Authorization': f"Bearer {self.token}"}
         response = requests.get(BASE_URL + settings['SHIPS_URL'], headers=headers)
         print(response.text)
-        self.ships = [Ship(ship) for ship in response.json()['data']]
-        # print(self.ships)
+        self.ships = [Ship.from_ship_data(ship) for ship in response.json()['data']]
+
+    @classmethod
+    def from_ship_data(cls, ship_data):
+        """Create a Fleet object from a ship data dict"""
+        return cls(ships=ship_data)
 
     def __str__(self):
         return f"{self.ships}"
@@ -31,18 +37,33 @@ class Fleet:
     def __repr__(self):
         return f"{self.ships}"
 
+
 class Ship:
-    def __init__(self, ship: dict):
-        self.symbol = ship['symbol']
-        print(ship)
-        self.crew = Crew(ship['crew'])
-        self.frame = Frame(ship['frame'])
-        self.reactor = Reactor(ship['reactor'])
-        self.engine = Engine(ship['engine'])
-        self.modules = [Module(module) for module in ship['modules']]
-        self.mounts = [Mount(mount) for mount in ship['mounts']]
-        self.cargo = Cargo(ship['cargo'])
-        self.fuel = Fuel(ship['fuel'])
+    def __init__(self, symbol: str, crew: dict, frame: dict, reactor: dict, engine: dict, modules: list, mounts: list,
+                 cargo: dict, fuel: dict):
+        self.symbol = symbol
+        self.crew = Crew(crew)
+        self.frame = Frame(frame)
+        self.reactor = Reactor(reactor)
+        self.engine = Engine(engine)
+        self.modules = [Module(module) for module in modules]
+        self.mounts = [Mount(mount) for mount in mounts]
+        self.cargo = Cargo(cargo)
+        self.fuel = Fuel(fuel)
+        self.update()
+
+    def __str__(self):
+        return f"{self.symbol}: {self.frame.name}"
+
+    def __repr__(self):
+        return f"{self.symbol}: {self.frame.name}"
+
+    @classmethod
+    def from_ship_data(cls, ship_data):
+        """Create a Ship object from a ship data dict"""
+        return cls(ship_data['symbol'], ship_data['crew'], ship_data['frame'], ship_data['reactor'],
+                   ship_data['engine'], ship_data['modules'], ship_data['mounts'], ship_data['cargo'],
+                   ship_data['fuel'])
 
     def update(self):
         pass
@@ -122,7 +143,6 @@ class Fuel:
         self.capacity = fuel['capacity']
         self.consumption = fuel['consumed']['amount']
         self.date_consumed = fuel['consumed']['timestamp']
-
 
 
 class Crew:

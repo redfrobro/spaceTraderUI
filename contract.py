@@ -1,7 +1,7 @@
 import requests
 
 import items
-import factions
+import faction
 from settings import settings
 
 if settings['ENVIRONMENT'] == "DEV":
@@ -18,12 +18,9 @@ class Contracts:
         self.contracts = self.get_contracts(self.token)
 
     @staticmethod
-    def get_contracts(token=None):
+    def get_contracts(token: str):
         """Get a list of contracts"""
-        if token is not None:
-            response = requests.get(BASE_URL + CONTRACTS_URL, headers={'Authorization': f"Bearer {token}"})
-        else:
-            raise ValueError("You must provide a token")
+        response = requests.get(BASE_URL + CONTRACTS_URL, headers={'Authorization': f"Bearer {token}"})
         return [Contract.from_contract_data(contract) for contract in response.json()['data']]
 
 

@@ -1,9 +1,9 @@
 import requests
 
 from settings import settings
-import factions
+import faction
 import fleet
-import contracts
+import contract
 
 
 if settings['ENVIRONMENT'] == "DEV":
@@ -13,10 +13,12 @@ else:
 
 
 class Agent:
-    def __init__(self, name: str = None, faction: str = None, token: str = None):
+    def __init__(self, name: str = None, agent_faction: str = None, token: str = None):
         headers = {'Content-Type': 'application/json'}
         self.faction = None
+        self.ships = None
 
+        # this entire if statement needs to be reworked
         if token is not None:
             headers['Authorization'] = f"Bearer {token}"
             response = requests.get(BASE_URL + settings['AGENT_URL'],  headers=headers)
@@ -25,12 +27,15 @@ class Agent:
             self.account_id = response.json()['data']['accountId']
             self.credits = response.json()['data']['credits']
             self.headquarters = response.json()['data']['headquarters']
+            self.token = token
+            self.faction = faction.Faction.from_symbol(response.json()['data']['faction'], self.token)
+            self.ships = fleet.Fleet.from_ship_data(response.json()['data']['ships'], self.token)
+            self.contracts = contract.Contracts(self.token)
 
-
-        elif name is not None and faction is not None:
+        elif name is not None and agent_faction is not None:
             # create a new agent
             data = {'symbol': name,
-                    'faction': faction}
+                    'faction': agent_faction}
             response = requests.post(BASE_URL + settings['REGISTER_URL'], json=data, headers=headers)
 
             # this is probably wrong, AI wrote this
@@ -45,12 +50,12 @@ class Agent:
                 self.credits = response.json()['data']['agent']['credits']
                 self.headquarters = response.json()['data']['agent']['headquarters']
                 self.token = response.json()['data']['token']
-                self.faction = factions.Faction.from_symbol(faction, self.token)
+                self.faction = faction.Faction.from_symbol(agent_faction, self.token)
+                self.contracts = contract.Contracts(self.token)
         else:
             raise ValueError("You must provide either a name and faction or a token")
 
-        self.ships = fleet.Fleet(self.token)
-        self.contracts = contracts.Contracts(self.token)
+
 
 
 # to be deleted later

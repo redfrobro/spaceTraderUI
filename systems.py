@@ -31,6 +31,7 @@ class Galaxy:
 
 class System:
     """A representation of a single system"""
+
     def __init__(self, symbol, sector_symbol, system_type, x, y, waypoint_list: list, factions_list: list):
         self.symbol = symbol
         self.sector_symbol = sector_symbol

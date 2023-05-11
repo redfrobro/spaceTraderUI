@@ -5,16 +5,34 @@ BASE_URL = "https://api.spacetraders.io/v2"
 BASE_URL = "https://stoplight.io/mocks/spacetraders/spacetraders/96627693"  # comment out for prod
 FACTIONS_URL = "/factions"
 
+
 class Faction:
-    def __init__(self, faction_data):
-        self.symbol = faction_data['symbol']
-        self.name = faction_data['name']
-        self.description = faction_data['description']
-        self.headquarters = faction_data['headquarters']
-        self.traits = [Trait(trait) for trait in faction_data['traits']]
+    """A class to represent a faction in the SpaceTraders API"""
+    def __init__(self, symbol=None, name=None, description=None, headquarters=None, traits=None):
+        self.symbol = symbol
+        self.name = name
+        self.description = description
+        self.headquarters = headquarters
+        self.traits = traits
+        print(self.traits)
 
     def update(self):
         pass
+
+    @classmethod
+    def from_symbol(cls, symbol, token=None):
+        """Create a Faction object from a faction symbol"""
+        if token is not None:
+            response = requests.get(BASE_URL + FACTIONS_URL + f"/{symbol}", headers={'Authorization': f"Bearer {token}"})
+        else:
+            raise ValueError("You must provide a token")
+        print(response.text)
+        return cls.from_faction_data(response.json()['data'])
+
+    @classmethod
+    def from_faction_data(cls, faction_data):
+        """Create a Faction object from a faction data dict"""
+        return cls(faction_data['symbol'], faction_data['name'], faction_data['description'], faction_data['headquarters'], faction_data['traits'])
 
     def __str__(self):
         return f"{self.name}: {self.description}"
@@ -45,9 +63,9 @@ def get_factions(token=None):
     else:
         raise ValueError("You must provide a token")
     print(response.text)
-    return [Faction(faction) for faction in response.json()['data']]
+    return [Faction.from_faction_data(faction) for faction in response.json()['data']]
 
 
 factions = get_factions('test_token')
 
-print(factions[0].traits[0].name)
+print(factions[0].traits[0])

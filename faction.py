@@ -1,23 +1,22 @@
 import requests
 
-import items
 from settings import settings
+
 if settings['ENVIRONMENT'] == "DEV":
     BASE_URL = settings['DEV_BASE_URL']
 else:
     BASE_URL = settings['BASE_URL']
 
 
-
 class Faction:
     """A class to represent a faction in the SpaceTraders API"""
-    def __init__(self, symbol=None, name=None, description=None, headquarters=None, traits=None):
+
+    def __init__(self, symbol: str, name: str, description: str, headquarters: str, traits: list):
         self.symbol = symbol
         self.name = name
         self.description = description
         self.headquarters = headquarters
-        self.traits = traits
-        print(self.traits)
+        self.traits = [Trait(trait) for trait in traits]
 
     def update(self):
         pass
@@ -26,7 +25,8 @@ class Faction:
     def from_symbol(cls, symbol, token=None):
         """Create a Faction object from a faction symbol"""
         if token is not None:
-            response = requests.get(BASE_URL + settings['FACTION_URL'] + f"/{symbol}", headers={'Authorization': f"Bearer {token}"})
+            response = requests.get(BASE_URL + settings['FACTION_URL'] + f"/{symbol}",
+                                    headers={'Authorization': f"Bearer {token}"})
         else:
             raise ValueError("You must provide a token")
         print(response.text)
@@ -35,7 +35,8 @@ class Faction:
     @classmethod
     def from_faction_data(cls, faction_data):
         """Create a Faction object from a faction data dict"""
-        return cls(faction_data['symbol'], faction_data['name'], faction_data['description'], faction_data['headquarters'], faction_data['traits'])
+        return cls(faction_data['symbol'], faction_data['name'], faction_data['description'],
+                   faction_data['headquarters'], faction_data['traits'])
 
     def __str__(self):
         return f"{self.name}: {self.description}"
@@ -61,6 +62,7 @@ class Trait:
 
 
 def get_factions(token=None):
+    """Get a list of all factions"""
     if token is not None:
         response = requests.get(BASE_URL + settings['FACTIONS_URL'], headers={'Authorization': f"Bearer {token}"})
     else:

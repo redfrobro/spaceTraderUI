@@ -13,7 +13,6 @@ def main_loop(screen):
         stat_box.addstr(1, 1, "This is a window", curses.color_pair(1))
         stat_box.border()
 
-
         system_box = curses.newwin(rows - math.floor(rows / 3), math.floor(cols / 3), math.ceil(rows / 3), 0)
         system_box.bkgd(' ', curses.color_pair(1))
         system_box.addstr(1, 1, "System Information", curses.color_pair(1))
@@ -35,6 +34,7 @@ def main_loop(screen):
 def init_screen():
     _screen = curses.initscr()
     return _screen
+
 
 scr = init_screen()
 curses.wrapper(main_loop)

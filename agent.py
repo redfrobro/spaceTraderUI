@@ -8,7 +8,6 @@ else:
     BASE_URL = settings['BASE_URL']
 
 
-
 class Agent:
     def __init__(self, name: str = None, faction: str = None, _token: str = None):
         headers = {'Content-Type': 'application/json'}

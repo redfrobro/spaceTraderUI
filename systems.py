@@ -12,8 +12,9 @@ else:
 
 class Galaxy:
     """A representation of the galaxy"""
-    def __init__(self, token=None):
-        self.systems = self.get_systems(token)
+    def __init__(self, token):
+        self.token = token
+        self.systems = self.get_systems(self.token)
         self.factions = self.get_factions(token)
         self.items = self.get_items(token)
 
@@ -21,7 +22,7 @@ class Galaxy:
     def get_systems(token=None):
         """Get a list of systems"""
         if token is not None:
-            response = requests.get(BASE_URL + settings['SYSTEM_URL'], headers={'Authorization': f"Bearer {token}"})
+            response = requests.get(BASE_URL + settings['SYSTEMS_URL'], headers={'Authorization': f"Bearer {token}"})
         else:
             raise ValueError("You must provide a token")
         print(response.text)
@@ -48,4 +49,5 @@ class Waypoint:
         pass
 
 
-galaxy = Galaxy()
+galaxy = Galaxy('fake_token')
+print(galaxy.systems)

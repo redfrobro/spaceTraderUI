@@ -69,6 +69,7 @@ def get_factions(token=None):
     return [Faction.from_faction_data(faction) for faction in response.json()['data']]
 
 
-factions = get_factions('test_token')
+if __name__ == "__main__":
+    factions = get_factions('test_token')
 
-print(factions[0].traits[0])
+    print(factions[0].traits[0])

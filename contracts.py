@@ -12,6 +12,21 @@ else:
 CONTRACTS_URL = "/my/contracts"
 
 
+class Contracts:
+    def __init__(self, token):
+        self.token = token
+        self.contracts = self.get_contracts(self.token)
+
+    @staticmethod
+    def get_contracts(token=None):
+        """Get a list of contracts"""
+        if token is not None:
+            response = requests.get(BASE_URL + CONTRACTS_URL, headers={'Authorization': f"Bearer {token}"})
+        else:
+            raise ValueError("You must provide a token")
+        return [Contract.from_contract_data(contract) for contract in response.json()['data']]
+
+
 class Contract:
     def __init__(self, contract_id, faction_symbol, deadline, on_accepted, on_fulfilled,
                  cargo_to_deliver, accepted, fulfilled, expiration):
@@ -64,5 +79,8 @@ def get_contracts(token=None):
     return [Contract(contract) for contract in response.json()['data']]
 
 
-contracts = get_contracts('test_token')
-print(contracts)
+if __name__ == "__main__":
+    contract_list = Contracts('test_token')
+    print(contract_list.contracts)
+    contracts = get_contracts('test_token')
+    print(contracts)

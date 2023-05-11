@@ -25,6 +25,11 @@ class Fleet:
         self.ships = [Ship(ship) for ship in response.json()['data']]
         # print(self.ships)
 
+    def __str__(self):
+        return f"{self.ships}"
+
+    def __repr__(self):
+        return f"{self.ships}"
 
 class Ship:
     def __init__(self, ship: dict):
@@ -132,7 +137,9 @@ class Crew:
     def update(self):
         pass
 
-fleet = Fleet(token='test_token')
-print(fleet.ships[0].symbol)
-print(fleet.ships[0].crew.current)
-print(fleet.ships[0].frame.name)
+
+if __name__ == '__main__':
+    fleet = Fleet(token='test_token')
+    print(fleet.ships[0].symbol)
+    print(fleet.ships[0].crew.current)
+    print(fleet.ships[0].frame.name)

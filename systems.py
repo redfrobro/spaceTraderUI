@@ -12,11 +12,10 @@ else:
 
 class Galaxy:
     """A representation of the galaxy"""
+
     def __init__(self, token):
         self.token = token
         self.systems = self.get_systems(self.token)
-        self.factions = self.get_factions(token)
-        self.items = self.get_items(token)
 
     @staticmethod
     def get_systems(token=None):
@@ -44,19 +43,25 @@ class System:
     @staticmethod
     def system_from_data(system_data):
         """Create a System object from a system data dict"""
-        return System(symbol=system_data['symbol'], sector_symbol=system_data['sectorSymbol'], system_type=system_data['type'],
+        return System(symbol=system_data['symbol'], sector_symbol=system_data['sectorSymbol'],
+                      system_type=system_data['type'],
                       x=system_data['x'], y=system_data['y'], waypoint_list=system_data['waypoints'],
                       factions_list=system_data['factions'])
 
-
+    @staticmethod
+    def system_from_symbol(symbol, token):
+        """Create a System object from a system symbol"""
+        response = requests.get(
+            BASE_URL + settings['SYSTEMS_URL'] + f"/{symbol}",
+            headers={'Authorization': f"Bearer {token}"}
+        )
+        return System.system_from_data(response.json()['data'])
 
     def __str__(self):
         return f"{self.symbol}: {self.type}"
 
     def __repr__(self):
         return f"{self.symbol}: {self.type}"
-
-
 
 
 class Waypoint:
@@ -104,5 +109,8 @@ class Traits:
         """Create a Traits object from a traits data dict"""
         return Traits(symbol=traits_data['symbol'], name=traits_data['name'], description=traits_data['description'])
 
-galaxy = Galaxy('fake_token')
-print(galaxy.systems)
+
+if __name__ == '__main__':
+    print(__name__)
+    galaxy = Galaxy('fake_token')
+    print(galaxy.systems)

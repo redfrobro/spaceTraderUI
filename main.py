@@ -1,5 +1,9 @@
 import curses
 import math
+import systems
+import settings
+import agent
+import fleet
 
 
 def main_loop(screen):
@@ -36,5 +40,8 @@ def init_screen():
     return _screen
 
 
-scr = init_screen()
-curses.wrapper(main_loop)
+# scr = init_screen()
+# curses.wrapper(main_loop)
+
+test_agent = agent.Agent("tester_thester", "COSMIC")
+print(test_agent.token)

@@ -22,5 +22,5 @@ settings = {'BASE_URL': "https://api.spacetraders.io/v2",
             'REGISTER_URL': "/register",
             'CONTRACTS_URL': "/my/contracts",
             'ENVIRONMENT': "PROD",  # DEV or PROD
-            'TOKEN': os.environ.get("AGENT_TOKEN"),
+            'AGENT_TOKEN': os.environ.get("AGENT_TOKEN"),
             }

@@ -44,6 +44,13 @@ def init_screen():
 # curses.wrapper(main_loop)
 
 # test_agent = agent.Agent("tester_thester", "COSMIC")
-test_agent = agent.Agent(token=settings.settings['TOKEN'])
+test_agent = agent.Agent(token=settings.settings['AGENT_TOKEN'])
 # print(test_agent.token)
 print(test_agent.name)
+print(test_agent.ships)
+print(test_agent.faction)
+print(test_agent.contracts)
+print(test_agent.headquarters)
+print(test_agent.credits)
+print(test_agent.account_id)
+

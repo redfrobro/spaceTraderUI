@@ -1,6 +1,6 @@
 import requests
 
-import items
+import item
 import faction
 from settings import settings
 

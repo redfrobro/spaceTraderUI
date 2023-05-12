@@ -17,7 +17,7 @@ class Agent:
     def __init__(self, name: str = None, agent_faction: str = None, token: str = None):
         headers = {'Content-Type': 'application/json'}
         self.faction = None
-        self.ships = None
+        self.ships = []
         self.contracts = None
         self.current_waypoint = None  # I dont think this is needed agents dont have waypoints
         self.current_system = None # I dont think this is needed agents dont have systems

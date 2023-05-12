@@ -1,8 +1,7 @@
 import datetime
 import requests
 
-import items
-import faction
+import item
 from settings import settings
 
 if settings['ENVIRONMENT'] == "DEV":
@@ -26,6 +25,9 @@ class Contracts:
         response = requests.get(BASE_URL + CONTRACTS_URL, headers={'Authorization': f"Bearer {token}"})
         return [Contract.from_contract_data(contract) for contract in response.json()['data']]
 
+    def __str__(self):
+        return f"{self.contracts}"
+
 
 class Contract:
     """A representation of a single contract"""
@@ -37,7 +39,7 @@ class Contract:
         self.deadline = deadline
         self.on_accepted = on_accepted
         self.on_fulfilled = on_fulfilled
-        self.cargo_to_deliver = cargo_to_deliver
+        self.cargo_to_deliver = [ContractCargo.from_contract_data(cargo) for cargo in cargo_to_deliver]
         self.accepted = accepted
         self.fulfilled = fulfilled
         self.expiration = expiration
@@ -57,34 +59,35 @@ class Contract:
                    expiration=contract_data['expiration'])
 
     def __str__(self):
-        return f"{self.id}: {self.faction_symbol}"
+        return f"{self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
 
     def __repr__(self):
-        return f"{self.id}: {self.faction_symbol}"
+        return f"{self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
 
 
 class ContractCargo:
     """A representation of the cargo to deliver for a contract"""
 
-    def __init__(self, contract_cargo_data):
-        self.good = items.Good(contract_cargo_data['good'])
-        self.quantity = contract_cargo_data['quantity']
+    def __init__(self, trade_symbol, destination_symbol, units_required, units_fulfilled):
+        self.trade_symbol = trade_symbol
+        self.destination_symbol = destination_symbol
+        self.units_required = units_required
+        self.units_fulfilled = units_fulfilled
+
+    @classmethod
+    def from_contract_data(cls, cargo_data):
+        """Create a ContractCargo object from a contract cargo data dict"""
+        return cls(trade_symbol=cargo_data['tradeSymbol'], destination_symbol=cargo_data['destinationSymbol'],
+                   units_required=cargo_data['unitsRequired'], units_fulfilled=cargo_data['unitsFulfilled'])
 
     def update(self):
         pass
 
+    def __str__(self):
+        return f"{self.units_required} {self.trade_symbol} to {self.destination_symbol}"
 
-class TradeSymbol:
-    """A representation of a trade symbol"""
-
-    def __init__(self, trade_symbol_data):
-        self.trade_symbol = trade_symbol_data['tradeSymbol']
-        self.destination_symbol = trade_symbol_data['destinationSymbol']
-        self.units_required = trade_symbol_data['unitsRequired']
-        self.units_fulfilled = trade_symbol_data['unitsFulfilled']
-
-    def update(self):
-        pass
+    def __repr__(self):
+        return f"{self.units_required} {self.trade_symbol} to {self.destination_symbol}"
 
 
 def get_contracts(token):
@@ -94,7 +97,7 @@ def get_contracts(token):
 
 
 if __name__ == "__main__":
-    contract_list = Contracts('test_token')
-    print(contract_list.contracts)
-    contracts = get_contracts('test_token')
+    # contract_list = Contracts('test_token')
+    # print(contract_list.contracts)
+    contracts = get_contracts(settings['AGENT_TOKEN'])
     print(contracts)

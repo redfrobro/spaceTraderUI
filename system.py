@@ -60,6 +60,10 @@ class System:
         )
         return System.system_from_data(response.json()['data'])
 
+    @staticmethod
+    def get_system_from_token(token):
+        '''Get a system from a token'''
+
     def __str__(self):
         return f"{self.symbol}"
 

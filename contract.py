@@ -48,7 +48,6 @@ class Contract:
     @classmethod
     def from_contract_data(cls, contract_data):
         """Create a Contract object from a contract data dict"""
-        print(contract_data)
         return cls(contract_id=contract_data['id'], faction_symbol=contract_data['factionSymbol'],
                    deadline=contract_data['terms']['deadline'],
                    on_accepted=contract_data['terms']['payment']['onAccepted'],

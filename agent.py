@@ -3,6 +3,7 @@ import requests
 from settings import settings
 import faction
 import fleet
+import system
 import contract
 
 
@@ -17,19 +18,25 @@ class Agent:
         headers = {'Content-Type': 'application/json'}
         self.faction = None
         self.ships = None
+        self.contracts = None
+        self.current_waypoint = None  # I dont think this is needed agents dont have waypoints
+        self.current_system = None # I dont think this is needed agents dont have systems
 
         # this entire if statement needs to be reworked
         if token is not None:
             headers['Authorization'] = f"Bearer {token}"
             response = requests.get(BASE_URL + settings['AGENT_URL'],  headers=headers)
             print(response.text)
+            # needs to add error handling
             self.name = response.json()['data']['symbol']
             self.account_id = response.json()['data']['accountId']
             self.credits = response.json()['data']['credits']
             self.headquarters = response.json()['data']['headquarters']
             self.token = token
-            self.faction = faction.Faction.from_symbol(response.json()['data']['faction'], self.token)
-            self.ships = fleet.Fleet.from_ship_data(response.json()['data']['ships'], self.token)
+            if 'faction' in response.json()['data']:
+                self.faction = faction.Faction.from_symbol(response.json()['data']['faction'], self.token)
+            if 'ships' in response.json()['data']:
+                self.ships = fleet.Fleet.from_ship_data(response.json()['data']['ships'])
             self.contracts = contract.Contracts(self.token)
 
         elif name is not None and agent_faction is not None:
@@ -44,7 +51,6 @@ class Agent:
             elif response.status_code == 409:
                 raise ValueError("The faction you provided is invalid")
             elif response.status_code == 201:
-                print(response.text)
                 self.name = response.json()['data']['agent']['symbol']
                 self.account_id = response.json()['data']['agent']['accountId']
                 self.credits = response.json()['data']['agent']['credits']
@@ -55,6 +61,17 @@ class Agent:
         else:
             raise ValueError("You must provide either a name and faction or a token")
 
+    def get_current_waypoint(self):
+        ''' Get the current waypoint and system of the agent'''
+        if self.current_system is not None:
+            return self.current_waypoint
+        curreent_waypoint = system.System()
+
+    def __str__(self):
+        return f"{self.name}: {self.faction}"
+
+    def __repr__(self):
+        return f"{self.name}: {self.faction}"
 
 
 

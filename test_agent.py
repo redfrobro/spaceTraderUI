@@ -1,4 +1,5 @@
 from agent import Agent
+from contract import Contracts
 from faction import Faction
 import settings
 
@@ -12,4 +13,4 @@ def test_agent():
     assert type(agent.account_id) == str
     assert type(agent.token) == str
     assert type(agent.ships) == list
-    assert type(agent.contracts) == list
+    assert type(agent.contracts) == Contracts

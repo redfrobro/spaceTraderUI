@@ -18,9 +18,6 @@ class Agent:
         headers = {'Content-Type': 'application/json'}
         self.faction = None
         self.ships = []
-        self.contracts = None
-        self.current_waypoint = None  # I dont think this is needed agents dont have waypoints
-        self.current_system = None # I dont think this is needed agents dont have systems
 
         # this entire if statement needs to be reworked
         if token is not None:
@@ -31,7 +28,7 @@ class Agent:
             self.name = response.json()['data']['symbol']
             self.account_id = response.json()['data']['accountId']
             self.credits = response.json()['data']['credits']
-            self.headquarters = response.json()['data']['headquarters']
+            # self.headquarters = system.System.from_symbol(response.json()['data']['headquarters'], token)
             self.token = token
             if 'faction' in response.json()['data']:
                 self.faction = faction.Faction.from_symbol(response.json()['data']['faction'], self.token)

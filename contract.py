@@ -44,8 +44,22 @@ class Contract:
         self.fulfilled = fulfilled
         self.expiration = expiration
 
-    def update(self):
-        pass
+    def update(self, contract_data: str):
+        """Update the contract"""
+        self.__init__(contract_id=contract_data['id'], faction_symbol=contract_data['factionSymbol'],
+                      deadline=contract_data['terms']['deadline'],
+                      on_accepted=contract_data['terms']['payment']['onAccepted'],
+                      on_fulfilled=contract_data['terms']['payment']['onFulfilled'],
+                      cargo_to_deliver=contract_data['terms']['deliver'],
+                      accepted=contract_data['accepted'], fulfilled=contract_data['fulfilled'],
+                      expiration=contract_data['expiration']
+                      )
+
+    def accept(self, token):
+        """Accept a contract"""
+        response = requests.post(BASE_URL + CONTRACTS_URL + f"/{self.id}/accept",
+                                 headers={'Authorization': f"Bearer {token}"})
+        self.update(response.json()['data']['contract'])
 
     @classmethod
     def from_contract_data(cls, contract_data):
@@ -59,10 +73,10 @@ class Contract:
                    expiration=contract_data['expiration'])
 
     def __str__(self):
-        return f"{self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
+        return f"{self.accepted}, {self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
 
     def __repr__(self):
-        return f"{self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
+        return f"{self.accepted}, {self.faction_symbol}: {self.cargo_to_deliver} for {self.on_fulfilled}ᖬ at {self.deadline}"
 
 
 class ContractCargo:
